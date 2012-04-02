@@ -57,6 +57,24 @@ class ResourceRecordSets(ResultSet):
     def __repr__(self):
         return '<ResourceRecordSets: %s>' % self.hosted_zone_id
 
+    def update_record(self, name, type, updated_record):
+        """
+        Update an existing record by deleting it and creating it again with updated values
+
+        :type name: str
+        :param name: name of the record to update
+
+        :type updated_record: Record
+        :param updated_record: updated record data
+
+        """
+
+        self.add_change('DELETE', name, type)
+        self.add_change('CREATE', name, updated_record.type,
+                ttl = updated_record.ttl, alias_hosted_zone_id = updated_record.alias_hosted_zone_id,
+                alias_dns_name = updated_record.alias_dns_name, identifier = updated_record.identifier,
+                weight = updated_record.weight, region = updated_record.region)
+
     def add_change(self, action, name, type, ttl=600,
             alias_hosted_zone_id=None, alias_dns_name=None, identifier=None,
             weight=None, region=None):
